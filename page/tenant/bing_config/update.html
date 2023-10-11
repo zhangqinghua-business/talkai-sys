@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>layui</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../../../lib/layui-v2.6.3/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../../css/public.css" media="all">
+    <style>
+        body {
+            background-color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+
+<div class="layuimini-container">
+    <div class="layuimini-main">
+
+    <form class="layui-form" disable lay-filter="update">
+        <input type="hidden" id="id" name="id">
+
+        <div class="layui-form-item">
+            <label class="layui-form-label required">账号</label>
+            <div class="layui-input-inline">
+                <input type="text" name="account" lay-verify="name" autocomplete="off" class="layui-input" placeholder="请输入账号">
+            </div>
+            <div class="layui-form-mid layui-word-aux"></div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label required">Cookie</label>
+            <div class="layui-input-inline">
+                <input type="text" name="cookie" lay-verify="cookie" autocomplete="off" class="layui-input" placeholder="请输入Cookie">
+            </div>
+            <div class="layui-form-mid layui-word-aux"></div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit="" lay-filter="demo1">立即提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script src="../../../lib/layui-v2.6.3/layui.js" charset="utf-8"></script>
+<script src="../../../js/lay-config.js?v=1.0.4" charset="utf-8"></script>
+<script>
+    // 1. 获取数据id update.html?id=123
+    let id = location.href.split("=")[1];
+
+    console.log('id==================', id);
+
+    layui.use(['form', 'laydate', 'dropdown', 'element', 'http'], function () {
+        let form = layui.form, laydate = layui.laydate, layer = layui.layer, $ = layui.$, dropdown = layui.dropdown;
+
+        // 1. 加载数据
+        initData(layui);
+
+        handlerSubmit(layui);
+    });
+
+    let initData = function (layui) {
+        layui.http.get("/tenant/bing_config/detail", {id: id}, (data) => {
+            console.log(data)
+
+            layui.form.val('update', data)
+        });
+    }
+
+    let handlerSubmit = function(layui) {
+        let form = layui.form, $ = layui.$;
+        // 监听提交事项
+        form.on('submit(demo1)', function (data) {
+            let param = data.field;
+            layui.http.post("/tenant/bing_config/update", param, () => {
+                // 2. 请求成功处理
+                let index = layer.msg('修改数据成功', {icon: 1, offset: 't'}, function () {
+                    // 1. 关闭弹出层
+                    layer.close(index);
+                    // 2. 关闭当前页面，返回上一级
+                    parent.layer.close(parent.layer.getFrameIndex(window.name));
+                    // 3. 重新加载表格数据
+                    parent.location.reload()
+                });
+            });
+            return false;
+        });
+    }
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,67 @@
+{
+  "homeInfo": {
+    "title": "首页",
+    "href": "plan/paging.html"
+  },
+  "logoInfo": {
+    "title": "TalkAI平台端",
+    "image": "../../images/logo.png",
+    "href": ""
+  },
+  "menuInfo": [
+    {
+      "title": "通用管理",
+      "icon": "fa fa-address-book",
+      "href": "",
+      "target": "_self",
+      "child": [
+        {
+          "title": "产品管理",
+          "icon": "fa fa-gears",
+          "target": "_self",
+          "child": [
+            {
+              "title": "套餐管理",
+              "href": "plan/paging.html",
+              "icon": "fa fa-list-alt",
+              "target": "_self"
+            }
+          ]
+        },
+        {
+          "title": "订单管理",
+          "icon": "fa fa-gears",
+          "target": "_self",
+          "child": [
+            {
+              "title": "套餐订单",
+              "href": "planorder/paging.html",
+              "icon": "fa fa-list-alt",
+              "target": "_self"
+            }
+          ]
+        },
+        {
+          "title": "租户管理",
+          "icon": "fa fa-gears",
+          "target": "_self",
+          "child": [
+            {
+              "title": "租户管理",
+              "href": "tenant/paging.html",
+              "icon": "fa fa-list-alt",
+              "target": "_self"
+            },
+            {
+              "title": "租户账号",
+              "href": "tenant_account/paging.html",
+              "icon": "fa fa-list-alt",
+              "target": "_self"
+            }
+          ]
+        }
+
+      ]
+    }
+  ]
+}
