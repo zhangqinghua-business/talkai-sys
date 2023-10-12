@@ -80,11 +80,13 @@
                               {title: '操作', width: 200, align: "left", templet: function (d) {
                                     // 1. 已暂停
                                     let str =''
-                                    str += '<a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="detail">查看</a>';
+                                    // str += '<a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="detail">查看</a>';
                                     // 3. 编辑
-                                    str += '<a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="update">编辑</a>';
+                                    // str += '<a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="update">编辑</a>';
                                     // 4. 删除
                                     str += '<a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="delete">删除</a>';
+                                    // 3. 站点设置
+                                    str += '<a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="siteSetting">站点设置</a>';
                                     return str;}}]],
                       page: true,
                       limit: 15,
@@ -179,52 +181,6 @@
                                   }
                                   });
             }
-
-            // 1. 启用/暂停
-            if (obj.event === 'enable') {
-                layui.$.ajax({url: layui.http.api + '/admin/merge_order_book/enable?mergeOrderBookId=' + obj.data.id,
-                                 type: "post",
-                                 dataType: "json",
-                                 contentType: "application/json",
-                                 success: function (data) {
-                                     if (data.code !== 0) {
-                                         layer.msg(data.message, {icon: 5, offset: 't'});
-                                         return;
-                                     }
-                                     // 重新加载数据表格
-                                     table.reload("tid");
-                                 }});
-            }
-            // 1. 开仓
-            if (obj.event === 'open') {
-                layui.$.ajax({url: layui.http.api + '/admin/merge_order_book/open?mergeOrderBookId=' + obj.data.id,
-                                 type: "post",
-                                 dataType: "json",
-                                 contentType: "application/json",
-                                 success: function (data) {
-                                     if (data.code !== 0) {
-                                         layer.msg(data.message, {icon: 5, offset: 't'});
-                                         return;
-                                     }
-                                     // 重新加载数据表格
-                                     table.reload("tid");
-                                 }});
-            }
-            // 1. 平仓
-            if (obj.event === 'close') {
-                layui.$.ajax({url: layui.http.api + '/admin/merge_order_book/close?mergeOrderBookId=' + obj.data.id,
-                                 type: "post",
-                                 dataType: "json",
-                                 contentType: "application/json",
-                                 success: function (data) {
-                                     if (data.code !== 0) {
-                                         layer.msg(data.message, {icon: 5, offset: 't'});
-                                         return;
-                                     }
-                                     // 重新加载数据表格
-                                     table.reload("tid");
-                                 }});
-            }
             // 4. 删除
             if (obj.event === 'delete') {
                 layui.$.ajax({url: layui.http.api + '/admin/member/delete?memberId=' + obj.data.id,
@@ -239,6 +195,17 @@
                                   // 重新加载数据表格
                                   table.reload("tid");
                               }});
+            }
+            // 2. 站点配置
+            if (obj.event === 'siteSetting') {
+                layui.layer.open({type: 2,
+                                  anim: 5,
+                                  shade: 0.3,
+                                  title: '站点配置',
+                                  maxmin: false,
+                                  shadeClose: true,
+                                  area: ['100%', '100%'],
+                                  content: 'site_setting.html?tenantId=' + obj.data.id});
             }
         });
 

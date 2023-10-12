@@ -4,8 +4,8 @@ layui.define(['layer', 'jquery'], function (exports) {
     "use strict";
 
     let api = {
-        api: "http://127.0.0.1:8071",
-        // api: "https://api.talkai.club",
+        // api: "http://127.0.0.1:8071",
+        api: "https://api.talkai.club",
         get: function (path, param, callback) {
             // 1. 转query参数
             const queryString = Object.entries(param).map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`).join("&");
