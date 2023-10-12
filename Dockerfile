@@ -9,3 +9,5 @@ EXPOSE      ${PORT}
 
 # COPY nginx/default.conf  /etc/nginx/conf.d/
 # COPY dist/  /usr/share/nginx/html/H5/sthcakes
+
+COPY ./  /usr/share/nginx/html
