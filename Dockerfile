@@ -3,5 +3,5 @@
 FROM nginx:stable-alpine
 
 # 将dist文件中的内容复制到 /usr/share/nginx/html/ 这个目录下面
-COPY ./  /dist
+# COPY ./  /dist
 # COPY nginx_tenant.conf  /etc/nginx/conf.d/nginx.conf
