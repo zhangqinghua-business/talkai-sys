@@ -194,6 +194,34 @@
             <div class="layui-col-md4">
 
                 <div class="layui-card">
+                    <div class="layui-card-header"><i class="fa fa-bullhorn icon icon-tip"></i>应用统计(当日)</div>
+                    <div class="layui-card-body layui-text" id="modelStats0">
+
+                        <div class="layuimini-notice">
+                            <div class="layuimini-notice-title">修改选项卡样式</div>
+                            <div class="layuimini-notice-extra">364 次对话</div>
+                            <div class="layuimini-notice-content layui-hide">
+                                测试数据。。。。
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="layui-card">
+                    <div class="layui-card-header"><i class="fa fa-bullhorn icon icon-tip"></i>应用统计(最近一月)</div>
+                    <div class="layui-card-body layui-text" id="modelStats1">
+
+                        <div class="layuimini-notice">
+                            <div class="layuimini-notice-title">修改选项卡样式</div>
+                            <div class="layuimini-notice-extra">364 次对话</div>
+                            <div class="layuimini-notice-content layui-hide">
+                                测试数据。。。。
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="layui-card">
                     <div class="layui-card-header"><i class="fa fa-bullhorn icon icon-tip"></i>系统公告</div>
                     <div class="layui-card-body layui-text">
                         <div class="layuimini-notice">
@@ -380,6 +408,11 @@
 
         // 2. 加载表报信息
         loadChart(layui);
+
+        // 3. 加载应用统计
+        loadModelStats(layui, 0,  'modelStats0');
+        loadModelStats(layui, 1,  'modelStats1');
+        // loadModelStats(layui, 2,  'modelStats2');
     });
 
 /**
@@ -501,6 +534,45 @@ let loadUserChart1 = function(layui, option, echarts, type) {
         echarts.clear()
         // 重新设置数据
         echarts.setOption(option, false);
+    });
+}
+
+/**
+ * 加载应用统计
+ */
+ let loadModelStats = function(layui, dateType, div) {
+    layui.http.get("/tenant/stats/model/stats", {dateType: dateType}, (data) => {
+        // 1. 清空子元素
+        var modelStats = document.getElementById(div);
+        while (modelStats.firstChild) {
+            modelStats.removeChild(modelStats.firstChild);
+        }
+
+        data.models.forEach( item => {
+            // 创建新的 div 元素
+            var newDiv = document.createElement("div");
+            newDiv.className = "layuimini-notice";
+
+            // 创建标题元素
+            var titleDiv = document.createElement("div");
+            titleDiv.className = "layuimini-notice-title";
+            titleDiv.innerHTML = item.modelName;
+            newDiv.appendChild(titleDiv);
+
+            // 创建额外信息元素
+            var extraDiv = document.createElement("div");
+            extraDiv.className = "layuimini-notice-extra";
+            extraDiv.innerHTML = item.chatCount +  '次对话(' + item.memberCount + '用户)';
+            newDiv.appendChild(extraDiv);
+
+            // 创建内容元素
+            var contentDiv = document.createElement("div");
+            contentDiv.className = "layuimini-notice-content layui-hide";
+            contentDiv.innerHTML = "测试数据。。。";
+            newDiv.appendChild(contentDiv);
+
+            modelStats.appendChild(newDiv)
+        })
     });
 }
 
