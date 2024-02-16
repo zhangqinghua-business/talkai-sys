@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>layui</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="stylesheet" href="../../../../lib/layui-v2.6.3/css/layui.css" media="all">
+  <link rel="stylesheet" href="../../../../css/public.css" media="all">
+  <script src="../../../../lib/layui-v2.6.3/layui.js" charset="utf-8"></script>
+  <script src="../../../../js/lay-config.js?v=1.0.4" charset="utf-8"></script>
+  <style>
+    body {
+      background-color: #ffffff;
+    }
+  </style>
+</head>
+<body>
+
+<div class="layuimini-container">
+  <div class="layuimini-main">
+
+  <form class="layui-form" disable lay-filter="update">
+    <input type="hidden" id="id" name="id">
+
+    <!-- 所属平台 -->
+    <div class="layui-form-item">
+      <label class="layui-form-label">所属平台</label>
+      <div class="layui-input-block">
+        <input type="radio" name="type" value="weibo" title="微博" checked="" disabled>
+        <input type="radio" name="type" value="xiaohongshu" title="小红书" disabled>
+      </div>
+    </div>
+
+    <!-- 帐号名称 -->
+    <div class="layui-form-item">
+      <label class="layui-form-label">帐号名称</label>
+      <div class="layui-input-inline">
+        <input type="text" name="name" lay-verify="required" autocomplete="off" class="layui-input" placeholder="请输入帐号名称" disabled>
+      </div>
+      <div class="layui-form-mid layui-word-aux"></div>
+    </div>
+
+    <!-- 帐号描述 -->
+    <div class="layui-form-item">
+      <label class="layui-form-label">帐号描述</label>
+      <div class="layui-input-inline">
+        <input type="text" name="desc" lay-verify="" autocomplete="off" class="layui-input" placeholder="请输入帐号描述" disabled>
+      </div>
+      <div class="layui-form-mid layui-word-aux"></div>
+    </div>
+  </form>
+</div>
+</div>
+
+<script>
+  // 1. 获取数据id update.html?id=123
+  let id = location.href.split("=")[1];
+
+  layui.use(['form', 'laydate', 'dropdown', 'element', 'http'], function () {
+    let form = layui.form, laydate = layui.laydate, layer = layui.layer, $ = layui.$, dropdown = layui.dropdown;
+    // 1. 加载数据
+    initData(layui);
+  });
+
+  let initData = function (layui) {
+    console.log('initData');
+    // 2. 查询数据
+    layui.http.post('/tenant/platform/detail?id=' + id, {}, (response) => {
+      console.log('response: ', response);
+
+    });
+    // layui.$.ajax({url: layui.http.api + '/tenant/platform/detail?id=' + id,
+    //               type: "post",
+    //               dataType: "json",
+    //               contentType: "application/json",
+    //               success: function (data) {
+    //                   console.log(data)
+    //                   if (data.code !== 0) {
+    //                       layer.msg(data.message, {icon: 5, offset: 't'});
+    //                       return;
+    //                   }
+    //                   let result = data.data;
+
+    //                   for (let i = 0; i < data.data.config.fieldItems.length; i++) {
+    //                       let lastFormItem = layui.$('.layui-form-item:last');
+    //                       let item = data.data.config.fieldItems[i];
+    //                       let html = '';
+    //                       // if (item.type === 0) {
+    //                           html = "<div class='layui-form-item'>" +
+    //                                   "   <label class='layui-form-label'>" + item.name +"</label>" +
+    //                                   "   <div class='layui-input-inline'>" +
+    //                                   "       <input type='password' name='" + item.key + "' lay-verify='" + (item.required === 0 ? "" : "required") + "' autocomplete='off' class='layui-input' placeholder='请输入" + item.name+ "' disabled>" +
+    //                                   "   </div>" +
+    //                                   "   <div class='layui-form-mid layui-word-aux'> " + item.desc + "</div>" +
+    //                                   "</div>";
+    //                       // }
+    //                       // if (item.type === 1) {
+    //                       //     html = "<div class='layui-form-item'>" +
+    //                       //            "   <label class='layui-form-label'>" + item.name +"</label>" +
+    //                       //            "   <div class='layui-input-inline'>" +
+    //                       //            "       <textarea placeholder='请输入" + item.name + "' lay-verify='" + (item.required === 0 ? "" : "required") + "' class='layui-textarea' name='" +item.key + "' disabled></textarea>" +
+    //                       //            "   </div>" +
+    //                       //            "   <div class='layui-form-mid layui-word-aux'> " + item.desc + "</div>" +
+    //                       //            "</div>";
+    //                       // }
+    //                       let newFromItem = layui.$(html);
+    //                       lastFormItem.after(newFromItem);
+
+    //                       result[item.key] = item.value;
+    //                   }
+
+    //                   layui.form.val('update', result)
+    //               }});
+  }
+
+
+    let loadOrderRecord = function (layui) {
+        layui.table.render({id: 'order_record',
+                            elem: '#order_record',
+                            url: layui.http.api + '/admin/merge_order_record/paging',
+                            loading: true,
+                            cols: [[{type: "checkbox", width: 50},
+                                    {field: 'id', hide: true},
+                                    {field: 'actualTime', title: '操盘时间'},
+                                    {field: 'direction', title: '操盘方向', templet: function(d){
+                                            return d.direction === 'long_open' ? '开多' :
+                                                   d.direction === 'short_open' ? '开空' :
+                                                   d.direction === 'long_close' ? '平多' : '平空';
+                                    }},
+                                    {field: 'actualPrice', title: '操盘价格'},
+                                    {field: 'amount', title: '操盘数量', templet: function(d){
+                                            return d.config.amount;
+                                    }},
+                                    {field: 'amount', title: '备注', templet: function(d){
+                                            let msg = '';
+                                            if (d.config.remark1) msg += d.config.remark1;
+                                            if (d.config.remark2) msg += d.config.remark2;
+                                            return msg;
+                                    }},
+                                    ]],
+                            page: true,
+                            where: {mergeOrderBookId: id},
+                            limit: 10,
+                            limits: [10, 15, 20]});
+    }
+
+</script>
+</body>
+</html>

@@ -42,6 +42,37 @@
           ]
         },
         {
+          "title": "营销推广",
+          "icon": "fa fa-gears",
+          "target": "_self",
+          "child": [
+            {
+              "title": "平台帐号",
+              "href": "seo/platform/paging.html",
+              "icon": "fa fa-list-alt",
+              "target": "_self"
+            },
+            {
+              "title": "素材采集",
+              "href": "seo/gather.html",
+              "icon": "fa fa-list-alt",
+              "target": "_self"
+            },
+            {
+              "title": "创作模板",
+              "href": "seo/generate.html",
+              "icon": "fa fa-list-alt",
+              "target": "_self"
+            },
+            {
+              "title": "定时计划",
+              "href": "seo/strategy.html",
+              "icon": "fa fa-list-alt",
+              "target": "_self"
+            }
+          ]
+        },
+        {
           "title": "系统设置",
           "icon": "fa fa-gears",
           "target": "_self",

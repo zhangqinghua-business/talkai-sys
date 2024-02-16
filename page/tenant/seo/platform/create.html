@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>layui</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../../../../lib/layui-v2.6.3/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../../../css/public.css" media="all">
+    <script src="../../../../lib/layui-v2.6.3/layui.js" charset="utf-8"></script>
+    <script src="../../../../js/lay-config.js?v=1.0.4" charset="utf-8"></script>
+    <style>
+      body {
+        background-color: #ffffff;
+      }
+    </style>
+</head>
+<body>
+
+<div class="layui-form layuimini-form">
+  <form class="layui-form" action="">
+
+    <!-- 所属平台 -->
+    <div class="layui-form-item">
+      <label class="layui-form-label">所属平台</label>
+      <div class="layui-input-block">
+        <input type="radio" name="type" value="weibo" title="微博" checked="">
+        <input type="radio" name="type" value="xiaohongshu" title="小红书">
+      </div>
+    </div>
+    
+    <!-- <div class="layui-form-item">
+      <div class="layui-inline">
+        <label class="layui-form-label">平台</label>
+        <div class="layui-input-inline">
+          <select id="platform" name="platform" lay-verify="required" lay-search="" lay-filter="platform">
+            <option value="weibo">微博</option>
+            <option value="xiaohongshu">小红书</option>
+          </select>
+        </div>
+      </div>
+    </div> -->
+
+    <!-- 帐号名称 -->
+    <div class="layui-form-item">
+      <label class="layui-form-label">帐号名称</label>
+      <div class="layui-input-inline">
+        <input type="text" name="name" lay-verify="required" autocomplete="off" class="layui-input" placeholder="请输入帐号名称">
+      </div>
+      <div class="layui-form-mid layui-word-aux"></div>
+    </div>
+
+    <!-- 帐号描述 -->
+    <div class="layui-form-item">
+      <label class="layui-form-label">帐号描述</label>
+      <div class="layui-input-inline">
+        <input type="text" name="desc" lay-verify="" autocomplete="off" class="layui-input" placeholder="请输入帐号描述">
+      </div>
+      <div class="layui-form-mid layui-word-aux"></div>
+    </div>
+
+    <!-- 提交按钮 -->
+    <div class="layui-form-item">
+      <div class="layui-input-block">
+        <button class="layui-btn" lay-submit="" lay-filter="demo1">立即提交</button>
+        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+      </div>
+    </div>
+
+  </form>
+</div>
+
+
+<script>
+layui.use(['form', 'laydate', 'dropdown', 'http'], function () {
+  let form = layui.form, laydate = layui.laydate, layer = layui.layer, $ = layui.$, dropdown = layui.dropdown;
+
+  // 加载平台数据
+  reloadMemberItems(layui, $, document.querySelector('input[name="type"]:checked').value);
+
+  // 监听平台数据变动
+  // form.on('select(type)', function(data){
+  //     reloadMemberItems(layui, $, data.value);
+  // });
+
+  // 2. 监听提交事件
+  form.on('submit(demo1)', function (data) {
+    // {name: xx, age: xx, field: {name: xx, age:xxx}}
+    layui.http.post('/tenant/platform/create', {...data.field, fields: data.field}, () => {
+      // 2. 请求成功处理
+      let index = layer.msg('新增数据成功', {icon: 1, offset: 't'}, function () {
+        // 1. 关闭弹出层
+        layer.close(index);
+        // 2. 关闭当前页面，返回上一级
+        parent.layer.close(parent.layer.getFrameIndex(window.name));
+        // 3. 重新加载表格数据
+        parent.location.reload()
+      });
+    });
+    return false;
+  });
+});
+
+let reloadMemberItems = function (layui, $, platform) {
+  // 初始化表单配置，不同平台的表单，要求输入的数据也不一致。
+  $.ajax({url: layui.http.api + '/tenant/platform/fields/' + platform,
+          type: "post",
+          dataType: "json",
+          contentType: "application/json",
+          success: function (data) {
+            // 1. 请求失败处理
+            if (data.code !== 200) {
+              return;
+            }
+
+            // 2. 清空之前的数据
+            const memberItems = document.querySelectorAll('.memberItems');
+            for (let i = 0; i < memberItems.length; i++) {
+              memberItems[i].remove();
+            }
+            console.log('清空之前的数据');
+
+            let lastFormItem = $('.layui-form-item:last');
+
+            console.log('lastFormItem: ', lastFormItem);
+            for (let i = 0; i < data.data.length; i++) {
+              let item = data.data[i];
+              let html = '';
+              // if (item.type === 0) {
+              html = "<div class='layui-form-item memberItems'>" +
+                     "   <label class='layui-form-label'>" + item.name +"</label>" +
+                     "   <div class='layui-input-inline'>" +
+                     "       <input type='text' name='" + item.key + "' lay-verify='" + (item.required === 0 ? "" : "required") + "' autocomplete='off' class='layui-input' placeholder='请输入" + item.name+ "'>" +
+                     "   </div>" +
+                     "   <div class='layui-form-mid layui-word-aux'> " + item.desc + "</div>" +
+                     "</div>";
+                // }
+                // if (item.type === 1) {
+                //     html = "<div class='layui-form-item'>" +
+                //                "   <label class='layui-form-label'>" + item.name +"</label>" +
+                //                "   <div class='layui-input-inline'>" +
+                //                "       <textarea placeholder='请输入" + item.name + "' class='layui-textarea' lay-verify='" + (item.required === 0 ? "" : "required") + "' name='" +item.key + "'></textarea>" +
+                //                "   </div>" +
+                //                "   <div class='layui-form-mid layui-word-aux'> " + item.desc + "</div>" +
+                //                "</div>";
+                // }
+                let newFromItem = $(html);
+                lastFormItem.before(newFromItem);
+              }
+          }});
+    }
+</script>
+</body>
+</html>
