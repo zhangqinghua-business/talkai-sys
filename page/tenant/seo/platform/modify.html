@@ -19,7 +19,7 @@
 <body>
 
 <div class="layui-form layuimini-form">
-  <form class="layui-form" action="">
+  <form class="layui-form" lay-filter="modify">
 
     <!-- 所属平台 -->
     <div class="layui-form-item">
@@ -73,11 +73,15 @@
 
 
 <script>
-layui.use(['form', 'laydate', 'dropdown', 'http'], function () {
+layui.use(['form', 'laydate', 'dropdown', 'http'], async function () {
   let form = layui.form, laydate = layui.laydate, layer = layui.layer, $ = layui.$, dropdown = layui.dropdown;
 
-  // 加载平台数据
-  reloadMemberItems(layui, $, document.querySelector('input[name="type"]:checked').value);
+  // 1. 加载数据
+  let id = location.href.split("=")[1];
+  const response = (id && await loadData(id, layui)) || undefined;
+
+  // 2. 加载平台数据
+  reloadMemberItems(response, layui);
 
   // 监听平台数据变动
   // form.on('select(type)', function(data){
@@ -87,9 +91,10 @@ layui.use(['form', 'laydate', 'dropdown', 'http'], function () {
   // 2. 监听提交事件
   form.on('submit(demo1)', function (data) {
     // {name: xx, age: xx, field: {name: xx, age:xxx}}
-    layui.http.post('/tenant/platform/create', {...data.field, fields: data.field}, () => {
+    data.field.id = id;
+    layui.http.post(`/tenant/platform/${id ? 'update' : 'create'}`, {...data.field, fields: data.field}, () => {
       // 2. 请求成功处理
-      let index = layer.msg('新增数据成功', {icon: 1, offset: 't'}, function () {
+      let index = layer.msg('操作成功', {icon: 1, offset: 't'}, function () {
         // 1. 关闭弹出层
         layer.close(index);
         // 2. 关闭当前页面，返回上一级
@@ -102,54 +107,49 @@ layui.use(['form', 'laydate', 'dropdown', 'http'], function () {
   });
 });
 
-let reloadMemberItems = function (layui, $, platform) {
-  // 初始化表单配置，不同平台的表单，要求输入的数据也不一致。
-  $.ajax({url: layui.http.api + '/tenant/platform/fields/' + platform,
-          type: "post",
-          dataType: "json",
-          contentType: "application/json",
-          success: function (data) {
-            // 1. 请求失败处理
-            if (data.code !== 200) {
-              return;
-            }
+let loadData = async (id, layui) => {
+  return layui.http.post("/tenant/platform/detail?id=" + id, null, (data) => {
+    layui.form.val('modify', data)
+  });
+}
 
-            // 2. 清空之前的数据
-            const memberItems = document.querySelectorAll('.memberItems');
-            for (let i = 0; i < memberItems.length; i++) {
-              memberItems[i].remove();
-            }
-            console.log('清空之前的数据');
+let reloadMemberItems = async function (platform, layui) {
+  const type = platform?.type || document.querySelector('input[name="type"]:checked').value;
 
-            let lastFormItem = $('.layui-form-item:last');
+  layui.http.post('/tenant/platform/fields/' + type, null, (data) => {
+      // 1. 清空之前的数据
+      const memberItems = document.querySelectorAll('.memberItems');
+      for (let i = 0; i < memberItems.length; i++) {
+        memberItems[i].remove();
+      }
 
-            console.log('lastFormItem: ', lastFormItem);
-            for (let i = 0; i < data.data.length; i++) {
-              let item = data.data[i];
-              let html = '';
-              // if (item.type === 0) {
-              html = "<div class='layui-form-item memberItems'>" +
-                     "   <label class='layui-form-label'>" + item.name +"</label>" +
-                     "   <div class='layui-input-inline'>" +
-                     "       <input type='text' name='" + item.key + "' lay-verify='" + (item.required === 0 ? "" : "required") + "' autocomplete='off' class='layui-input' placeholder='请输入" + item.name+ "'>" +
-                     "   </div>" +
-                     "   <div class='layui-form-mid layui-word-aux'> " + item.desc + "</div>" +
-                     "</div>";
-                // }
-                // if (item.type === 1) {
-                //     html = "<div class='layui-form-item'>" +
-                //                "   <label class='layui-form-label'>" + item.name +"</label>" +
-                //                "   <div class='layui-input-inline'>" +
-                //                "       <textarea placeholder='请输入" + item.name + "' class='layui-textarea' lay-verify='" + (item.required === 0 ? "" : "required") + "' name='" +item.key + "'></textarea>" +
-                //                "   </div>" +
-                //                "   <div class='layui-form-mid layui-word-aux'> " + item.desc + "</div>" +
-                //                "</div>";
-                // }
-                let newFromItem = $(html);
-                lastFormItem.before(newFromItem);
-              }
-          }});
-    }
+      let lastFormItem = layui.$('.layui-form-item:last');
+      for (let i = 0; i < data.length; i++) {
+        let item = data[i];
+        let html = '';
+
+        let input = '';
+        if (item.type === 'text') {
+          input = `<input type='text' name='${item.key}' placeholder='请输入${item.name}' value='${platform?.fields[item.key] || ''}' lay-verify='${item.required === 0 ? '' : 'required'}' autocomplete='off' class='layui-input'>`
+        } else if (item.type === 'textarea'){
+          input = `<textarea name="${item.key}" placeholder="请输入${item.name}" autocomplete='off' class="layui-textarea">${platform?.fields[item.key] || ''}</textarea>`
+        } else {
+
+        }
+
+        // if (item.type === 0) {
+        html =  "<div class='layui-form-item memberItems'>" +
+                "   <label class='layui-form-label'>" + item.name +"</label>" +
+                "   <div class='layui-input-inline'>" +
+                "       " + input +
+                "   </div>" +
+                "   <div class='layui-form-mid layui-word-aux'> " + item.desc + "</div>" +
+                "</div>";
+          let newFromItem = layui.$(html);
+          lastFormItem.before(newFromItem);
+      }
+  }) 
+}
 </script>
 </body>
 </html>

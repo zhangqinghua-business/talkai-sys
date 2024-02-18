@@ -57,7 +57,7 @@ layui.use(['form', 'table', 'layer', 'dateUtils', 'http'], function () {
   let $ = layui.jquery, form = layui.form, table = layui.table;
 
   table.render({id: 'tid',
-                url: layui.http.api + '/tenant/platform/paging',
+                url: layui.http.api + '/tenant/generate/paging',
                 method: 'post',
                 contentType: 'application/json',
                 headers: {token: window.localStorage.getItem("token")},
@@ -67,20 +67,23 @@ layui.use(['form', 'table', 'layer', 'dateUtils', 'http'], function () {
                 toolbar: '#toolbarDemo',
                 cols: [[{type: "checkbox", width: 50},
                         {field: 'id', hide: true},
-                        {field: 'type', title: '所属平台', templet: (d) => d.type === 'weibo' ? "微博" : d.type === 'xiaohongshu ' ? "小红书" : "未知平台"},
-                        {field: 'name', title: '帐号名称'},
-                        {field: 'desc', title: '帐号描述'},
+                        {field: 'name', title: '模板名称'},
+                        {field: 'prompt', title: '创作提示词'},
                         {title: '引用数量', templet: d => d.attach?.refCount || 0},
-                        {title: '推送次数', templet: d => d.attach?.useCount || 0},
+                        {title: '使用次数', templet: d => d.attach?.useCount || 0},
                         {field: 'gmtCreated', title: '创建时间', width: 180},
-                        {title: '操作', width: 200, align: "center", templet: (d) => {
-                          // 1. 已暂停
+                        {title: '操作', width: 250, align: "center", templet: (d) => {
+                          // 1. 详情
                           let str =''
-                          // str += '<a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="detail">查看</a>';
-                          // 3. 编辑
-                          str += '<a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="update">编辑</a>';
+                          str += '<a class="layui-btn layui-btn-xs" lay-event="detail">查看</a>';
+                          // 2. 编辑
+                          str += '<a class="layui-btn layui-btn-xs layui-bg-purple" lay-event="update">编辑</a>';
+                          
+                          // 3. 开始/暂停
+                          str += `<a class="layui-btn layui-btn-xs layui-bg-${d.status !== 1 ? 'blue' : 'orange'}" lay-event="status">${d.status !== 1 ? '重启' : '暂停'}</a>`;
+                          
                           // 4. 删除
-                          str += `<a class="layui-btn layui-btn-xs layui-btn-${d.attach.refCount !== 0 ? 'disabled': 'danger'}" lay-event="delete">删除</a>`;
+                          str += '<a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="delete">删除</a>';
                           return str;}}]],
                 page: true,
                 limit: 15,
@@ -110,7 +113,7 @@ layui.use(['form', 'table', 'layer', 'dateUtils', 'http'], function () {
                   maxmin: false,
                   shadeClose: true,
                   area: ['100%', '100%'],
-                  content: 'modify.html'});
+                  content: 'create.html'});
 
     }
     // 2. 批量删除
@@ -154,7 +157,7 @@ layui.use(['form', 'table', 'layer', 'dateUtils', 'http'], function () {
                         maxmin: false,
                         shadeClose: true,
                         area: ['100%', '100%'],
-                        content: 'modify.html?id=' + obj.data.id,
+                        content: 'create.html?id=' + obj.data.id,
                         // 层弹出后的成功回调方法
                         success: function () {
                           console.log("success 层弹出后的成功回调方法")
@@ -172,8 +175,15 @@ layui.use(['form', 'table', 'layer', 'dateUtils', 'http'], function () {
 
     // 4. 删除
     if (obj.event === 'delete') {
-      if (obj.data.attach.refCount !== 0) return;
       layui.http.post('/tenant/platform/delete?id=' + obj.data.id, null, (response) =>{
+        // 重新加载数据表格
+        table.reload("tid");
+      });
+    }
+
+    // 5. 开始/暂停
+    if (obj.event === 'status') {
+      layui.http.post('/tenant/schedule/status?id=' + obj.data.id, null, (response) =>{
         // 重新加载数据表格
         table.reload("tid");
       });

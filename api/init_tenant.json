@@ -54,19 +54,19 @@
             },
             {
               "title": "素材采集",
-              "href": "seo/gather.html",
+              "href": "seo/gather/paging.html",
               "icon": "fa fa-list-alt",
               "target": "_self"
             },
             {
               "title": "创作模板",
-              "href": "seo/generate.html",
+              "href": "seo/generate/paging.html",
               "icon": "fa fa-list-alt",
               "target": "_self"
             },
             {
               "title": "定时计划",
-              "href": "seo/strategy.html",
+              "href": "seo/schedule/paging.html",
               "icon": "fa fa-list-alt",
               "target": "_self"
             }

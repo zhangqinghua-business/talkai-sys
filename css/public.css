@@ -80,11 +80,11 @@ body {
 
 /*将输入框的长度设置300px，避免太短*/
 .layui-form-item .layui-input-inline {
-    width: 300px !important;
+    width: 500px !important;
 }
 /*将下拉框的长度设置300px，避免太短*/
 .layui-form-select {
-    width: 300px !important;
+    width: 500px !important;
 }
 /*将搜索框的距离缩短*/
 .table-search-fieldset .layui-form-item {

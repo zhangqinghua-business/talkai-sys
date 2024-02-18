@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>layui</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../../../../lib/layui-v2.6.3/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../../../css/public.css" media="all">
+    <script src="../../../../lib/layui-v2.6.3/layui.js" charset="utf-8"></script>
+    <script src="../../../../js/lay-config.js?v=1.0.4" charset="utf-8"></script>
+    <style>
+      body {
+        background-color: #ffffff;
+      }
+      #gatherIds > .layui-form-checkbox span,
+      #generateIds > .layui-form-checkbox span,
+      #platformIds > .layui-form-checkbox span {
+        width: 100px;
+      }
+    </style>
+</head>
+<body>
+
+<div class="layui-form layuimini-form">
+  <form class="layui-form" disable lay-filter="modify">
+
+    <!-- 任务名称 -->
+    <div class="layui-form-item">
+      <label class="layui-form-label">帐号名称</label>
+      <div class="layui-input-inline">
+        <input type="text" name="name" lay-verify="required" autocomplete="off" class="layui-input" placeholder="请输入任务名称">
+      </div>
+      <div class="layui-form-mid layui-word-aux"></div>
+    </div>
+
+    <!-- 运行间隔 -->
+    <div class="layui-form-item">
+      <label class="layui-form-label">采集间隔</label>
+      <div class="layui-input-block">
+        <input type="radio" name="interval" value="600"  title="10分钟" checked>
+        <input type="radio" name="interval" value="1800" title="30分钟">
+        <input type="radio" name="interval" value="3600" title="60分钟">
+      </div>
+    </div>
+
+    <!-- 运行时间段 -->
+    <div class="layui-form-item">
+      <label class="layui-form-label">运行时间</label>
+      <div class="layui-input-block">
+        <input type="checkbox" name="serverHours[0]"  title="00" value="0">
+        <input type="checkbox" name="serverHours[1]"  title="01" value="1">
+        <input type="checkbox" name="serverHours[2]"  title="02" value="2">
+        <input type="checkbox" name="serverHours[3]"  title="03" value="3">
+        <input type="checkbox" name="serverHours[4]"  title="04" value="4">
+        <input type="checkbox" name="serverHours[5]"  title="05" value="5">
+        <input type="checkbox" name="serverHours[6]"  title="06" value="6">
+        <input type="checkbox" name="serverHours[7]"  title="07" value="7">
+        <br/>
+        <input type="checkbox" name="serverHours[8]"  title="08" value="8"  checked>
+        <input type="checkbox" name="serverHours[9]"  title="09" value="9"  checked>
+        <input type="checkbox" name="serverHours[10]" title="10" value="10" checked>
+        <input type="checkbox" name="serverHours[11]" title="11" value="11" checked>
+        <input type="checkbox" name="serverHours[12]" title="12" value="12" checked>
+        <input type="checkbox" name="serverHours[13]" title="13" value="13" checked>
+        <input type="checkbox" name="serverHours[14]" title="14" value="14" checked>
+        <input type="checkbox" name="serverHours[15]" title="15" value="15" checked>
+        <br/>
+        <input type="checkbox" name="serverHours[16]" title="16" value="16" checked>
+        <input type="checkbox" name="serverHours[17]" title="17" value="17" checked>
+        <input type="checkbox" name="serverHours[18]" title="18" value="18" checked>
+        <input type="checkbox" name="serverHours[19]" title="19" value="19" checked>
+        <input type="checkbox" name="serverHours[20]" title="20" value="20" checked>
+        <input type="checkbox" name="serverHours[21]" title="21" value="21" checked>
+        <input type="checkbox" name="serverHours[22]" title="22" value="22" checked>
+        <input type="checkbox" name="serverHours[23]" title="23" value="23" checked>
+      </div>
+    </div>
+
+    <div class="layui-form-item">
+      <label class="layui-form-label">素材采集</label>
+      <div class="layui-input-block" id="gatherIds">
+      </div>
+    </div>
+   
+    <div class="layui-form-item">
+      <label class="layui-form-label">创作模板</label>
+      <div class="layui-input-block" id="generateIds">
+      </div>
+    </div>
+
+    <div class="layui-form-item">
+      <label class="layui-form-label">推送账号</label>
+      <div class="layui-input-block" id="platformIds">
+        <!-- <input type="checkbox" name="platformIds[0]" title="选项112" value="100101" width="500px">
+        <input type="checkbox" name="platformIds[1]" title="选项24e5er6trty" value="100102" checked>
+        <br>
+        <input type="checkbox" name="platformIds[2]" title="选项357567" value="100103"> -->
+      </div>
+    </div>
+
+    <!-- 提交按钮 -->
+    <div class="layui-form-item">
+      <div class="layui-input-block">
+        <button class="layui-btn" lay-submit="" lay-filter="demo1">立即提交</button>
+        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+      </div>
+    </div>
+
+  </form>
+</div>
+
+
+<script>
+layui.use(['form', 'laydate', 'dropdown', 'http'], async function () {
+  // 1. 获取数据id update.html?id=123
+  let id = location.href.split("=")[1];
+  let form = layui.form, laydate = layui.laydate, layer = layui.layer, $ = layui.$, dropdown = layui.dropdown;
+
+  // 加载数据
+  const response = (id && await loadData(id, layui)) || undefined;
+
+  // 加载素材采集
+  laodGather(layui, response);
+  // 加载创作模板
+  laodGenerate(layui, response);
+  // 加载分发平台
+  laodPlatform(layui, response);
+
+  // 2. 监听提交事件
+  form.on('submit(demo1)', function (data) {
+    // 处理运行时间的复选框
+    data.field.serverHours = []
+    for (let key in data.field) {
+      if (key.startsWith('serverHours[') && key.endsWith(']')) {
+        data.field.serverHours.push(data.field[key]);
+      }
+    }
+
+    // 处理素材采集的复选框
+    data.field.gatherIds = []
+    for (let key in data.field) {
+      if (key.startsWith('gatherIds[') && key.endsWith(']')) {
+        data.field.gatherIds.push(data.field[key]);
+      }
+    }
+
+    // 处理素材采集的复选框
+    data.field.generateIds = []
+    for (let key in data.field) {
+      if (key.startsWith('generateIds[') && key.endsWith(']')) {
+        data.field.generateIds.push(data.field[key]);
+      }
+    }
+
+    // 处理分发平台的复选框
+    data.field.platformIds = []
+    for (let key in data.field) {
+      if (key.startsWith('platformIds[') && key.endsWith(']')) {
+        data.field.platformIds.push(data.field[key]);
+      }
+    }
+
+    data.field.id = id;
+    layui.http.post( id ? '/tenant/schedule/update' : '/tenant/schedule/create', data.field, () => {
+      // 2. 请求成功处理
+      let index = layer.msg('新增数据成功', {icon: 1, offset: 't'}, function () {
+        // 1. 关闭弹出层
+        layer.close(index);
+        // 2. 关闭当前页面，返回上一级
+        parent.layer.close(parent.layer.getFrameIndex(window.name));
+        // 3. 重新加载表格数据
+        parent.location.reload()
+      });
+    });
+    return false;
+  });
+});
+
+let loadData = async (id, layui) => {
+  return layui.http.post("/tenant/schedule/detail?id=" + id, null, (data) => {
+    layui.form.val('modify', data)
+
+    // 处理运行时间
+    var checkboxes = document.querySelectorAll('.layui-input-block input[type="checkbox"][name^="serverHours"]');
+    checkboxes.forEach(function(checkbox) {
+      checkbox.checked = data.serverHours.includes(Number(checkbox.value)); // 设置为选中状态
+    });
+
+    layui.form.render();
+  });
+}
+
+/**
+ * 加载推送平台 
+ **/
+let laodGather = function (layui, schedule) {
+  const platformIdsEle = layui.$('#gatherIds');
+
+  layui.http.post('/tenant/gather/listes', null, (response) => {
+    response.forEach((data, index) => {
+      const html = `<input type="checkbox" name="gatherIds[${index}]" title="${data.name}" value="${data.id}" ${schedule?.gatherIds?.includes(data.id) ? 'checked' : ''}>`
+      let newFromItem = layui.$(html);
+      platformIdsEle.append(newFromItem);
+    });
+
+    // 添加元素后，一些特殊的元素需要用得到layui重新渲染才生效
+    layui.form.render();
+  })
+}
+/**
+ * 加载创作模板 
+ **/
+let laodGenerate = function (layui, schedule) {
+  const platformIdsEle = layui.$('#generateIds');
+  layui.http.post('/tenant/generate/listes', null, (response) => {
+    response.forEach((data, index) => {
+      const html = `<input type="checkbox" name="generateIds[${index}]" title="${data.name}" value="${data.id}" ${schedule?.generateIds?.includes(data.id) ? 'checked' : ''}>`
+      let newFromItem = layui.$(html);
+      platformIdsEle.append(newFromItem);
+    });
+
+    // 添加元素后，一些特殊的元素需要用得到layui重新渲染才生效
+    layui.form.render();
+  })
+}
+
+/**
+ * 加载推送平台 
+ **/
+let laodPlatform = function (layui, schedule) {
+  const platformIdsEle = layui.$('#platformIds');
+
+  layui.http.post('/tenant/platform/listes', null, (response) => {
+    response.forEach((data, index) => {
+      const type = data.type === 'weibo' ? '微博' : data.type === 'xiaohongshu' ? '小红书' : '未知平台';
+      const html = `<input type="checkbox" name="platformIds[${index}]" title="${type} ${data.name}" value="${data.id}" ${schedule?.platformIds?.includes(data.id) ? 'checked' : ''}>`
+      let newFromItem = layui.$(html);
+      platformIdsEle.append(newFromItem);
+    });
+
+    // 添加元素后，一些特殊的元素需要用得到layui重新渲染才生效
+    layui.form.render();
+  })
+}
+</script>
+</body>
+</html>
