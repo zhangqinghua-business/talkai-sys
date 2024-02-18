@@ -22,7 +22,7 @@
 <body>
 
 <div class="layui-form layuimini-form">
-  <form class="layui-form" action="">
+  <form class="layui-form" lay-filter="modify">
 
     <div class="layui-form-item">
       <label class="layui-form-label">模板名称</label>
@@ -35,7 +35,7 @@
     <div class="layui-form-item">
       <label class="layui-form-label">创作提示词</label>
       <div class="layui-input-inline">
-        <input type="text" name="prompt" lay-verify="required" autocomplete="off" class="layui-input" placeholder="请输入创作提示词">
+        <textarea name="prompt" placeholder="请输入创作提示词" class="layui-textarea"></textarea>
       </div>
       <div class="layui-form-mid layui-word-aux"></div>
     </div>
@@ -54,10 +54,15 @@
 <script>
 layui.use(['form', 'laydate', 'dropdown', 'http'], function () {
   let form = layui.form, laydate = layui.laydate, layer = layui.layer, $ = layui.$, dropdown = layui.dropdown;
+  let id = location.href.split("=")[1];
+  layui.http.post("/tenant/generate/detail?id=" + id, null, (data) => {
+    layui.form.val('modify', data)
+  });
 
   // 2. 监听提交事件
   form.on('submit(demo1)', function (data) {
-    layui.http.post('/tenant/generate/create', data.field, () => {
+    data.field.id = id;
+    layui.http.post(`/tenant/generate/${id ? 'update' : 'create'}`, data.field, () => {
       // 2. 请求成功处理
       let index = layer.msg('新增成功', {icon: 1, offset: 't'}, function () {
         // 1. 关闭弹出层

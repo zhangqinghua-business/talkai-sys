@@ -80,7 +80,11 @@ layui.use(['form', 'table', 'layer', 'dateUtils', 'http'], function () {
                           // 3. 编辑
                           str += '<a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="update">编辑</a>';
                           // 4. 删除
-                          str += `<a class="layui-btn layui-btn-xs layui-btn-${d.attach.refCount !== 0 ? 'disabled': 'danger'}" lay-event="delete">删除</a>`;
+                          if (d.attach.refCount > 0) {
+                            str += `<a class="layui-btn layui-btn-xs layui-btn-disabled" lay-event="">删除</a>`;
+                          } else {
+                            str += `<a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="delete">删除</a>`;
+                          }
                           return str;}}]],
                 page: true,
                 limit: 15,
@@ -172,7 +176,6 @@ layui.use(['form', 'table', 'layer', 'dateUtils', 'http'], function () {
 
     // 4. 删除
     if (obj.event === 'delete') {
-      if (obj.data.attach.refCount !== 0) return;
       layui.http.post('/tenant/platform/delete?id=' + obj.data.id, null, (response) =>{
         // 重新加载数据表格
         table.reload("tid");

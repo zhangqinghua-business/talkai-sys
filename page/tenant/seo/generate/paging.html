@@ -113,7 +113,7 @@ layui.use(['form', 'table', 'layer', 'dateUtils', 'http'], function () {
                   maxmin: false,
                   shadeClose: true,
                   area: ['100%', '100%'],
-                  content: 'create.html'});
+                  content: 'modify.html'});
 
     }
     // 2. 批量删除
@@ -157,7 +157,7 @@ layui.use(['form', 'table', 'layer', 'dateUtils', 'http'], function () {
                         maxmin: false,
                         shadeClose: true,
                         area: ['100%', '100%'],
-                        content: 'create.html?id=' + obj.data.id,
+                        content: 'modify.html?id=' + obj.data.id,
                         // 层弹出后的成功回调方法
                         success: function () {
                           console.log("success 层弹出后的成功回调方法")
@@ -175,15 +175,7 @@ layui.use(['form', 'table', 'layer', 'dateUtils', 'http'], function () {
 
     // 4. 删除
     if (obj.event === 'delete') {
-      layui.http.post('/tenant/platform/delete?id=' + obj.data.id, null, (response) =>{
-        // 重新加载数据表格
-        table.reload("tid");
-      });
-    }
-
-    // 5. 开始/暂停
-    if (obj.event === 'status') {
-      layui.http.post('/tenant/schedule/status?id=' + obj.data.id, null, (response) =>{
+      layui.http.post('/tenant/generate/delete?id=' + obj.data.id, null, (response) =>{
         // 重新加载数据表格
         table.reload("tid");
       });
