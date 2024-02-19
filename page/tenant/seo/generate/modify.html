@@ -55,7 +55,7 @@
 layui.use(['form', 'laydate', 'dropdown', 'http'], function () {
   let form = layui.form, laydate = layui.laydate, layer = layui.layer, $ = layui.$, dropdown = layui.dropdown;
   let id = location.href.split("=")[1];
-  layui.http.post("/tenant/generate/detail?id=" + id, null, (data) => {
+  id && layui.http.post("/tenant/generate/detail?id=" + id, null, (data) => {
     layui.form.val('modify', data)
   });
 

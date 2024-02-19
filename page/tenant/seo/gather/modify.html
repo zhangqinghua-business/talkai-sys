@@ -33,7 +33,15 @@
     </div>
 
     <div class="layui-form-item">
-      <label class="layui-form-label">采集网站</label>
+      <label class="layui-form-label">采集类型</label>
+      <div class="layui-input-block">
+        <input type="radio" name="type" value="0" title="题材" lay-filter="type-filter">
+        <input type="radio" name="type" value="1" title="内容" lay-filter="type-filter" checked="">
+      </div>
+    </div>
+
+    <div class="layui-form-item">
+      <label class="layui-form-label">采集来源</label>
       <div class="layui-input-inline">
         <input type="text" name="site" lay-verify="required" autocomplete="off" class="layui-input" placeholder="请输入采集网站">
       </div>
@@ -57,14 +65,22 @@
     </div>
 
     <div class="layui-form-item">
-      <label class="layui-form-label">内容正则</label>
+      <label class="layui-form-label">简介正则</label>
       <div class="layui-input-inline">
-        <input type="text" name="contentRegex" lay-verify="required" autocomplete="off" class="layui-input" placeholder="请输入解析正则">
+        <input type="text" name="introRegex" lay-verify="required" autocomplete="off" class="layui-input" placeholder="请输入解析正则">
       </div>
       <div class="layui-form-mid layui-word-aux"></div>
     </div>
 
-    <div class="layui-form-item">
+    <div class="layui-form-item" id="contentRegexDiv">
+      <label class="layui-form-label">内容正则</label>
+      <div class="layui-input-inline">
+        <input type="text" name="contentRegex" autocomplete="off" class="layui-input" placeholder="请输入解析正则">
+      </div>
+      <div class="layui-form-mid layui-word-aux"></div>
+    </div>
+
+    <div class="layui-form-item" id="summarizeDiv">
       <label class="layui-form-label">提炼提示词</label>
       <div class="layui-input-inline">
         <textarea name="summarize" placeholder="请输入提炼提示词" class="layui-textarea"></textarea>
@@ -90,6 +106,24 @@ layui.use(['form', 'laydate', 'dropdown', 'http'], async function () {
   // 1. 加载数据
   let id = location.href.split("=")[1];
   const response = (id && await loadData(id, layui)) || undefined;
+
+  form.on('radio(type-filter)', function(data){
+    var elem = data.elem;       // 获得 radio 原始 DOM 对象
+    var checked = elem.checked; // 获得 radio 选中状态
+    var value = elem.value;     // 获得 radio 值
+    var othis = data.othis;     // 获得 radio 元素被替换后的 jQuery 对象
+
+    // 1. 选择题材类型，屏蔽一些元素
+    if (value == 0) {
+      $('#summarizeDiv').hide();
+      $('#contentRegexDiv').hide();
+    } 
+    // 2. 选择内容类型，显示一些元素
+    else {
+      $('#summarizeDiv').show();
+      $('#contentRegexDiv').show();
+    }
+  });
 
   // 2. 监听提交事件
   form.on('submit(demo1)', function (data) {
@@ -120,6 +154,10 @@ layui.use(['form', 'laydate', 'dropdown', 'http'], async function () {
 let loadData = async (id, layui) => {
   return layui.http.post("/tenant/gather/detail?id=" + id, null, (data) => {
     layui.form.val('modify', data)
+    if (data.type == 0) {
+      layui.$('#summarizeDiv').hide();
+      layui.$('#contentRegexDiv').hide();
+    }
   });
 }
 </script>
