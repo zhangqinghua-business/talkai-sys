@@ -71,8 +71,11 @@ layui.use(['form', 'table', 'layer', 'dateUtils', 'http'], function () {
                         {title: '素材来源', templet: d => d.attach?.gathers.map(platform => platform.name)},
                         {title: '创作模板', templet: d => d.attach?.generates.map(platform => platform.name)},
                         {title: '推送账号', templet: d => d.attach?.platforms.map(platform => platform.name)},
-                        {field: 'couint', title: '运行次数', templet: d => d.attach.successCount + '/' + d.attach.failureCount},
-                        {field: 'status', title: '当前状态', templet: d => d.status === 0 ? '已暂停' : d.status === 1 ? '运行中' : d.status === 2 ? '已结束' : '已出错'},
+                        {title: '采集均费', templet: d => '¥' + (d.attach.successCount !== 0 && (Number(d.attach.taskPayment.gather) / d.attach.successCount).toFixed(4))},
+                        {title: '创作均费', templet: d => '¥' + (d.attach.successCount !== 0 && (Number(d.attach.taskPayment.generate) / d.attach.successCount).toFixed(4))},
+                        {title: '运行总费', templet: d => '¥' + (Number(d.attach.taskPayment.gather) + Number(d.attach.taskPayment.generate)).toFixed(4)},
+                        {title: '运行次数', templet: d => (d.attach.successCount + d.attach.failureCount).toString().padStart(4, '0') + `(<span style="color: #c76d6d">${d.attach?.failureCount.toString().padStart(2, '0')}</span>)`},
+                        {title: '当前状态', templet: d => d.status === 0 ? '已暂停' : d.status === 1 ? '运行中' : d.status === 2 ? '已结束' : '已出错'},
                         {field: 'gmtCreated', title: '创建时间', width: 180},
                         {title: '操作', width: 250, align: "center", templet: (d) => {
                           // 1. 详情
