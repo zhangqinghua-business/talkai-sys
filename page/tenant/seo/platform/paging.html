@@ -84,6 +84,12 @@ layui.use(['form', 'table', 'layer', 'dateUtils', 'http'], function () {
                           // str += '<a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="detail">查看</a>';
                           // 3. 编辑
                           str += '<a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="update">编辑</a>';
+                          // 自动评论
+                          if (d.commentConfig?.status === 0) {
+                            str += '<a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="autoComment">启用评论</a>';
+                          } else {
+                            str += '<a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="autoComment">禁用评论</a>';
+                          }
                           // 4. 删除
                           if (d.attach.refCount > 0) {
                             str += `<a class="layui-btn layui-btn-xs layui-btn-disabled" lay-event="">删除</a>`;
@@ -177,6 +183,13 @@ layui.use(['form', 'table', 'layer', 'dateUtils', 'http'], function () {
                             console.log("end 右上角关闭按钮触发的回调")
                         }
                         });
+    }
+    // 4. 自动评论
+    if (obj.event === 'autoComment') {
+      layui.http.post('/tenant/platform/enable_comment?id=' + obj.data.id, null, (response) =>{
+        // 重新加载数据表格
+        table.reload("tid");
+      });
     }
     // 4. 删除
     if (obj.event === 'delete') {
