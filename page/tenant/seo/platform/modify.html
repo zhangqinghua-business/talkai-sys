@@ -60,6 +60,66 @@
       <div class="layui-form-mid layui-word-aux"></div>
     </div>
 
+    <div class="layui-form-item">
+      <label class="layui-form-label">自动评论</label>
+      <div class="layui-input-block">
+        <input type="radio" name="status" value="0" title="关闭" checked="">
+        <input type="radio" name="status" value="1" title="启用">
+      </div>
+    </div>
+
+  <!-- 运行间隔 -->
+  <div class="layui-form-item">
+    <label class="layui-form-label">评论间隔</label>
+    <div class="layui-input-block">
+      <input type="radio" name="interval" value="60"   title="01分钟">
+      <input type="radio" name="interval" value="600"  title="10分钟" checked>
+      <input type="radio" name="interval" value="1800" title="30分钟">
+      <input type="radio" name="interval" value="3600" title="60分钟">
+    </div>
+  </div>
+
+  <!-- 运行时间段 -->
+  <div class="layui-form-item">
+    <label class="layui-form-label">运行时间</label>
+    <div class="layui-input-block">
+      <input type="checkbox" name="serverHours[0]"  title="00" value="0">
+      <input type="checkbox" name="serverHours[1]"  title="01" value="1">
+      <input type="checkbox" name="serverHours[2]"  title="02" value="2">
+      <input type="checkbox" name="serverHours[3]"  title="03" value="3">
+      <input type="checkbox" name="serverHours[4]"  title="04" value="4">
+      <input type="checkbox" name="serverHours[5]"  title="05" value="5">
+      <input type="checkbox" name="serverHours[6]"  title="06" value="6">
+      <input type="checkbox" name="serverHours[7]"  title="07" value="7">
+      <br/>
+      <input type="checkbox" name="serverHours[8]"  title="08" value="8"  checked>
+      <input type="checkbox" name="serverHours[9]"  title="09" value="9"  checked>
+      <input type="checkbox" name="serverHours[10]" title="10" value="10" checked>
+      <input type="checkbox" name="serverHours[11]" title="11" value="11" checked>
+      <input type="checkbox" name="serverHours[12]" title="12" value="12" checked>
+      <input type="checkbox" name="serverHours[13]" title="13" value="13" checked>
+      <input type="checkbox" name="serverHours[14]" title="14" value="14" checked>
+      <input type="checkbox" name="serverHours[15]" title="15" value="15" checked>
+      <br/>
+      <input type="checkbox" name="serverHours[16]" title="16" value="16" checked>
+      <input type="checkbox" name="serverHours[17]" title="17" value="17" checked>
+      <input type="checkbox" name="serverHours[18]" title="18" value="18" checked>
+      <input type="checkbox" name="serverHours[19]" title="19" value="19" checked>
+      <input type="checkbox" name="serverHours[20]" title="20" value="20" checked>
+      <input type="checkbox" name="serverHours[21]" title="21" value="21" checked>
+      <input type="checkbox" name="serverHours[22]" title="22" value="22" checked>
+      <input type="checkbox" name="serverHours[23]" title="23" value="23" checked>
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label">评论提示词</label>
+    <div class="layui-input-inline">
+      <textarea name="commentPrompt" placeholder="请输入评论提示词" class="layui-textarea"></textarea>
+    </div>
+    <div class="layui-form-mid layui-word-aux"></div>
+  </div>
+
     <!-- 提交按钮 -->
     <div class="layui-form-item">
       <div class="layui-input-block">
@@ -67,7 +127,6 @@
         <button type="reset" class="layui-btn layui-btn-primary">重置</button>
       </div>
     </div>
-
   </form>
 </div>
 
@@ -90,9 +149,17 @@ layui.use(['form', 'laydate', 'dropdown', 'http'], async function () {
 
   // 2. 监听提交事件
   form.on('submit(demo1)', function (data) {
+    // 处理运行时间的复选框
+    data.field.serverHours = []
+    for (let key in data.field) {
+      if (key.startsWith('serverHours[') && key.endsWith(']')) {
+        data.field.serverHours.push(data.field[key]);
+      }
+    }
+    
     // {name: xx, age: xx, field: {name: xx, age:xxx}}
     data.field.id = id;
-    layui.http.post(`/tenant/platform/${id ? 'update' : 'create'}`, {...data.field, fields: data.field}, () => {
+    layui.http.post(`/tenant/platform/${id ? 'update' : 'create'}`, {...data.field, commentConfig: data.field, fields: data.field}, () => {
       // 2. 请求成功处理
       let index = layer.msg('操作成功', {icon: 1, offset: 't'}, function () {
         // 1. 关闭弹出层
@@ -109,7 +176,7 @@ layui.use(['form', 'laydate', 'dropdown', 'http'], async function () {
 
 let loadData = async (id, layui) => {
   return layui.http.post("/tenant/platform/detail?id=" + id, null, (data) => {
-    layui.form.val('modify', data)
+    layui.form.val('modify', {...data, ...data.commentConfig})
   });
 }
 

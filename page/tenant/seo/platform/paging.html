@@ -70,10 +70,10 @@ layui.use(['form', 'table', 'layer', 'dateUtils', 'http'], function () {
                         {field: 'type', title: '所属平台', templet: (d) => d.type === 'weibo' ? "微博" : d.type === 'xiaohongshu ' ? "小红书" : "未知平台"},
                         {field: 'name', title: '帐号名称'},
                         {field: 'desc', title: '帐号描述'},
-                        {title: '自动评论', templet: d => d.autoComment === 0 ? '禁用' : '启用'},
+                        {title: '自动评论', templet: d => d.commentConfig?.status === 1 ? '启用' : '禁用'},
                         {title: '引用数量', templet: d => d.attach?.refCount || 0},
                         {title: '发帖次数', templet: d => d.attach?.useCount || 0},
-                        {title: '评论次数', templet: d => d.attach?.commentCount || 0},
+                        {title: '评论次数', templet: d => d.attach?.commentCount + '/' + d.attach?.commentFailure},
                         {title: '评论花费', templet: d => d.attach?.commentPayment || 0},
                         {field: 'gmtCreated', title: '创建时间', width: 180},
                         {title: '操作', width: 200, align: "center", templet: (d) => {
@@ -82,13 +82,6 @@ layui.use(['form', 'table', 'layer', 'dateUtils', 'http'], function () {
                           // str += '<a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="detail">查看</a>';
                           // 3. 编辑
                           str += '<a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="update">编辑</a>';
-
-                          // 自动评论
-                          if (d.autoComment === 0) {
-                            str += '<a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="autoComment">启用评论</a>';
-                          } else {
-                            str += '<a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="autoComment">禁用评论</a>';
-                          }
                           // 4. 删除
                           if (d.attach.refCount > 0) {
                             str += `<a class="layui-btn layui-btn-xs layui-btn-disabled" lay-event="">删除</a>`;
@@ -182,13 +175,6 @@ layui.use(['form', 'table', 'layer', 'dateUtils', 'http'], function () {
                             console.log("end 右上角关闭按钮触发的回调")
                         }
                         });
-    }
-    // 4. 自动评论
-    if (obj.event === 'autoComment') {
-      layui.http.post('/tenant/platform/auto_comment?id=' + obj.data.id, null, (response) =>{
-        // 重新加载数据表格
-        table.reload("tid");
-      });
     }
     // 4. 删除
     if (obj.event === 'delete') {
