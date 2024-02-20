@@ -72,7 +72,6 @@
   <div class="layui-form-item">
     <label class="layui-form-label">评论间隔</label>
     <div class="layui-input-block">
-      <input type="radio" name="interval" value="60"   title="01分钟">
       <input type="radio" name="interval" value="600"  title="10分钟" checked>
       <input type="radio" name="interval" value="1800" title="30分钟">
       <input type="radio" name="interval" value="3600" title="60分钟">
@@ -156,7 +155,7 @@ layui.use(['form', 'laydate', 'dropdown', 'http'], async function () {
         data.field.serverHours.push(data.field[key]);
       }
     }
-    
+
     // {name: xx, age: xx, field: {name: xx, age:xxx}}
     data.field.id = id;
     layui.http.post(`/tenant/platform/${id ? 'update' : 'create'}`, {...data.field, commentConfig: data.field, fields: data.field}, () => {
