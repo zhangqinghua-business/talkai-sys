@@ -70,9 +70,10 @@ layui.use(['form', 'table', 'layer', 'dateUtils', 'http'], function () {
                         {field: 'name', title: '采集项目'},
                         {field: 'type', title: '采集类型', templet: d => d.type === 0 ? '题材' : '内容'},
                         {field: 'site', title: '采集网站'},
-                        {field: 'summarize', title: '精炼提示词'},
-                        {title: '引用数量', templet: d => d.attach?.refCount || 0},
-                        {title: '使用数量', templet: d => d.attach?.useCount || 0},
+                        {title: '引用数量', templet: d => (0).toString().padStart(4, '0')},
+                        {title: '采集均费', templet: d => (0).toString().padStart(4, '0')},
+                        {title: '采集总费', templet: d => (0).toString().padStart(4, '0')},
+                        {title: '采集次数', templet: d => (d.attach?.useCount || 0).toString().padStart(4, '0')},
                         {field: 'gmtCreated', title: '创建时间', width: 180},
                         {title: '操作', width: 250, align: "center", templet: (d) => {
                           // 1. 详情
