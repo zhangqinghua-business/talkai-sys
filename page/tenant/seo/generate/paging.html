@@ -71,7 +71,7 @@ layui.use(['form', 'table', 'layer', 'dateUtils', 'http'], function () {
                         {title: '引用数量', templet: d => (d.attach?.refCount || 0).toString().padStart(4, '0')},
                         {title: '创作均费', templet: d => '¥' + (d.attach?.usePayment / (d.attach?.refCount || 1)).toFixed(4)},
                         {title: '创作总费', templet: d => '¥' + Number((d.attach?.usePayment || 0)).toFixed(4)},
-                        {title: '创作次数', templet: d => '¥' + (d.attach?.useCount || 0).toString().padStart(4, '0')},
+                        {title: '创作次数', templet: d => (d.attach?.useCount || 0).toString().padStart(4, '0')},
                         {field: 'gmtCreated', title: '创建时间', width: 180},
                         {title: '操作', width: 250, align: "center", templet: (d) => {
                           // 1. 详情
