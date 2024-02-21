@@ -176,6 +176,14 @@ layui.use(['form', 'laydate', 'dropdown', 'http'], async function () {
 let loadData = async (id, layui) => {
   return layui.http.post("/tenant/platform/detail?id=" + id, null, (data) => {
     layui.form.val('modify', {...data, ...data.commentConfig})
+
+    // 处理运行时间
+    var checkboxes = document.querySelectorAll('.layui-input-block input[type="checkbox"][name^="serverHours"]');
+    checkboxes.forEach(function(checkbox) {
+      checkbox.checked = data.commentConfig.serverHours.includes(Number(checkbox.value)); // 设置为选中状态
+    });
+    
+    layui.form.render();
   });
 }
 
