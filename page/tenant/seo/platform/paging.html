@@ -73,7 +73,7 @@ layui.use(['form', 'table', 'layer', 'dateUtils', 'http'], function () {
                         
                         {title: '引用数量', templet: d => (d.attach?.refCount || 0).toString().padStart(4, '0')},
                         {title: '发帖次数', templet: d => (d.attach?.useCount || 0).toString().padStart(4, '0')},
-                        {title: '自动评论', templet: d => d.commentConfig?.status === 1 ? '启用' : '禁用'},
+                        {title: '自动评论', templet: d => d.commentConfig?.enable === 1 ? '启用' : '禁用'},
                         {title: '评论次数', templet: d => d.attach?.commentCount?.toString().padStart(4, '0') + `(<span style="color: #c76d6d">${d.attach?.commentFailure.toString().padStart(2, '0')}</span>)`},
                         {title: '评论均费', templet: d => '¥' + Number(d.attach?.commentPayment / (d.attach?.commentCount || 1)).toFixed(4)},
                         {title: '评论总费', templet: d => '¥' + Number(d.attach?.commentPayment).toFixed(4)},
@@ -85,7 +85,7 @@ layui.use(['form', 'table', 'layer', 'dateUtils', 'http'], function () {
                           // 3. 编辑
                           str += '<a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="update">编辑</a>';
                           // 自动评论
-                          if (d.commentConfig?.status === 0) {
+                          if (d.commentConfig?.enable === 0) {
                             str += '<a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="autoComment">启用评论</a>';
                           } else {
                             str += '<a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="autoComment">禁用评论</a>';
