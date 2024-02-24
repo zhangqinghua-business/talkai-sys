@@ -33,6 +33,23 @@
     </div>
 
     <div class="layui-form-item">
+      <label class="layui-form-label">生成图片</label>
+      <div class="layui-input-block">
+        <input type="radio" name="image" value="0" title="禁用图片" lay-filter="image-filter" checked="">
+        <input type="radio" name="image" value="1" title="生成图片" lay-filter="image-filter" >
+      </div>
+    </div>
+
+    <div class="layui-form-item">
+      <label class="layui-form-label">创作类型</label>
+      <div class="layui-input-block">
+        <input type="radio" name="type" value="0" title="评论" lay-filter="type-filter" checked="">
+        <input type="radio" name="type" value="1" title="推文" lay-filter="type-filter">
+        <input type="radio" name="type" value="2" title="文章" lay-filter="type-filter">
+      </div>
+    </div>
+
+    <div class="layui-form-item">
       <label class="layui-form-label">创作提示词</label>
       <div class="layui-input-inline">
         <textarea name="prompt" placeholder="请输入创作提示词" class="layui-textarea"></textarea>

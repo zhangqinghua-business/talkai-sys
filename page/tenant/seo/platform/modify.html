@@ -24,9 +24,9 @@
     <!-- 所属平台 -->
     <div class="layui-form-item">
       <label class="layui-form-label">所属平台</label>
-      <div class="layui-input-block">
-        <input type="radio" name="type" value="weibo" title="微博" checked="">
-        <input type="radio" name="type" value="xiaohongshu" title="小红书">
+      <div class="layui-input-block" la>
+        <input type="radio" name="type" value="weibo"       title="微博"   lay-filter="type-filter" checked="">
+        <input type="radio" name="type" value="xiaohongshu" title="小红书" lay-filter="type-filter">
       </div>
     </div>
     
@@ -142,9 +142,15 @@ layui.use(['form', 'laydate', 'dropdown', 'http'], async function () {
   reloadMemberItems(response, layui);
 
   // 监听平台数据变动
-  // form.on('select(type)', function(data){
-  //     reloadMemberItems(layui, $, data.value);
-  // });
+  form.on('radio(type-filter)', function(data){
+    var elem = data.elem;       // 获得 radio 原始 DOM 对象
+    var checked = elem.checked; // 获得 radio 选中状态
+    var value = elem.value;     // 获得 radio 值
+    var othis = data.othis;     // 获得 radio 元素被替换后的 jQuery 对象
+
+    // 1. 选择题材类型，屏蔽一些元素
+    reloadMemberItems(value, layui);
+  });
 
   // 2. 监听提交事件
   form.on('submit(demo1)', function (data) {
@@ -201,12 +207,11 @@ let reloadMemberItems = async function (platform, layui) {
       for (let i = 0; i < data.length; i++) {
         let item = data[i];
         let html = '';
-
         let input = '';
         if (item.type === 'text') {
-          input = `<input type='text' name='${item.key}' placeholder='请输入${item.name}' value='${platform?.fields[item.key] || ''}' lay-verify='${item.required === 0 ? '' : 'required'}' autocomplete='off' class='layui-input'>`
+          input = `<input type='text' name='${item.key}' placeholder='请输入${item.name}' value='${platform?.fields?.[item.key] || ''}' lay-verify='${item.required === 0 ? '' : 'required'}' autocomplete='off' class='layui-input'>`
         } else if (item.type === 'textarea'){
-          input = `<textarea name="${item.key}" placeholder="请输入${item.name}" autocomplete='off' class="layui-textarea">${platform?.fields[item.key] || ''}</textarea>`
+          input = `<textarea name="${item.key}" placeholder="请输入${item.name}" autocomplete='off' class="layui-textarea">${platform?.fields?.[item.key] || ''}</textarea>`
         } else {
 
         }

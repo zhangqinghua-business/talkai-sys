@@ -87,6 +87,9 @@ layui.use(['form', 'table', 'layer', 'dateUtils', 'http'], function () {
                           // 3. 开始/暂停
                           str += `<a class="layui-btn layui-btn-xs layui-bg-${d.status !== 1 ? 'blue' : 'orange'}" lay-event="status">${d.status !== 1 ? '重启' : '暂停'}</a>`;
                           
+                          // 4. 立即运行
+                          str += '<a class="layui-btn layui-btn-xs layui-bg-purple" lay-event="execute">执行</a>';
+
                           // 4. 删除
                           if (d.status === 1) {
                             str += '<a class="layui-btn layui-btn-xs layui-btn-disabled" lay-event="">删除</a>';
@@ -182,7 +185,14 @@ layui.use(['form', 'table', 'layer', 'dateUtils', 'http'], function () {
                         }
                         });
     }
-
+    
+    // 4. 立即运行
+    if (obj.event === 'execute') {
+    layui.http.post('/tenant/schedule/execute?id=' + obj.data.id, null, (response) =>{
+      // 重新加载数据表格
+      table.reload("tid");
+    });
+    }
     // 4. 删除
     if (obj.event === 'delete') {
       layui.http.post('/tenant/schedule/delete?id=' + obj.data.id, null, (response) =>{
