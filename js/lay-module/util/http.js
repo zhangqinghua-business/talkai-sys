@@ -1,8 +1,6 @@
 layui.define(['layer', 'jquery'], function (exports) {
     let $ = layui.$;
-
     "use strict";
-
     let api = {
         // api: "http://127.0.0.1:8071",
         api: "https://api.talkai.club",
